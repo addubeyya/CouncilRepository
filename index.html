@@ -1146,9 +1146,19 @@ const PEOPLE=[
  {id:"p676",name:"\u07a2\u07a6\u0784\u07b0\u078b\u07aa\ufdf2 \u0790\u07a8\u0783\u07b0\u0799\u07a7\u0782\u07b0",council:"vilufushee",position:"Council Member",rank:3,party:"PNC",phone:"7320873",cat:"councillor",ward:"\u2014",termStart:"2026",termEnd:"2031",ver:"official",photo:null,updated:"2026-08-02"},
 ];
 
-const PHOTOS={
- "p26":{url:"photos/c026.jpg",source:"Supplied by directory editor, 3 Aug 2026 \u2014 official source URL pending"}
+// LGA photo pattern: https://www.lga.gov.mv/storage/councilors/avatars/councilor/{lga_id}.webp
+const LGA_PHOTO=id=>`https://www.lga.gov.mv/storage/councilors/avatars/councilor/${id}.webp`;
+const LGA_ID={"p26":342};                       // record id -> LGA councillor id
+const PHOTOS={                                   // locally hosted copies (optimised)
+ "p26":{url:"photos/c026.jpg",source:LGA_PHOTO(342),accessed:"2026-08-03"}
 };
+function photoFor(p){
+ const local=PHOTOS[p.id];
+ if(p.photo)return p.photo;
+ if(local)return local.url;
+ if(LGA_ID[p.id])return LGA_PHOTO(LGA_ID[p.id]);
+ return null;
+}
 const SERVICES=["Local administration","Municipal services","Waste management","Harbour services","Land and property","Social services","Sports and recreation","Environmental services","Business permits","Local tourism","Public complaints","Emergency contacts"];
 
 /* ---------------- Helpers ---------------- */
@@ -1236,11 +1246,16 @@ function councilCard(c,q=""){const pres=PEOPLE.find(p=>p.council===c.id&&(p.posi
 
 const PARTYCOLOR={MDP:["#F9D423",0],PNC:["#E6007E",1],JP:["#D0021B",1],MDA:["#6A3FA0",1],
  AP:["#0F8A5F",1],DEM:["#1B6DC1",1],IND:["#8CA0AE",1]};
+function photoFallback(img,ini){
+ const alt=img.getAttribute("data-alt");
+ if(alt&&img.src!==alt){img.removeAttribute("data-alt");img.src=alt;return;}
+ img.replaceWith(Object.assign(document.createElement("span"),{className:"ini",textContent:ini}));
+}
 function personCard(p,q=""){const c=councilById(p.council);
  const [col,light]=PARTYCOLOR[p.party]||["#8CA0AE",1];
  const label=p.party==="IND"?"Independent":p.party;
- const ph=p.photo||(PHOTOS[p.id]&&PHOTOS[p.id].url);
- const photo=ph?`<img src="${esc(ph)}" alt="${esc(p.position)}, ${esc(c.name)}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'ini',textContent:'${esc(initials(latinName(p.name)))}'}))">`
+ const ph=photoFor(p);
+ const photo=ph?`<img src="${esc(ph)}" alt="${esc(p.position)}, ${esc(c.name)}" loading="lazy" data-alt="${LGA_ID[p.id]?esc(LGA_PHOTO(LGA_ID[p.id])):""}" onerror="photoFallback(this,'${esc(initials(latinName(p.name)))}')">`
    :`<span class="ini">${esc(initials(latinName(p.name)))}</span>`;
  return `<article class="pcard photo">
   <div class="pphoto"><span class="ring" style="--pc:${col}"><span class="inner">${photo}</span></span>

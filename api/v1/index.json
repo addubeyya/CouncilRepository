@@ -1,1 +1,41 @@
-{"api": "Maldives Local Councils Directory", "version": "v1", "base_url": "https://addubeyya.github.io/CouncilRepository/api/v1", "updated": "2026-08-02", "license": "Public information. Source: Local Government Authority (lga.gov.mv).", "source": "Local Government Authority, Republic of Maldives", "totals": {"councils": 186, "island_councils": 179, "city_councils": 5, "atoll_councils": 2, "councillors": 677, "secretary_generals": 0, "atolls": 20}, "parties": {"MDP": "Maldivian Democratic Party", "PNC": "People’s National Congress", "IND": "Independent", "MDA": "Maldives Development Alliance", "AP": "Adhaalath Party", "JP": "Jumhooree Party", "DEM": "The Democrats"}, "endpoints": {"index": "https://addubeyya.github.io/CouncilRepository/api/v1/index.json", "councils": "https://addubeyya.github.io/CouncilRepository/api/v1/councils.json", "council": "https://addubeyya.github.io/CouncilRepository/api/v1/councils/{council_id}.json", "councillors": "https://addubeyya.github.io/CouncilRepository/api/v1/councillors.json", "atolls": "https://addubeyya.github.io/CouncilRepository/api/v1/atolls.json", "atoll": "https://addubeyya.github.io/CouncilRepository/api/v1/atolls/{atoll_code}.json"}, "notes": ["Static JSON over HTTPS with CORS enabled. No key required.", "Councillor names are in Thaana; name_latin is a transliteration for search.", "Secretary Generals are not published by LGA and are absent by design.", "source_note marks records where LGA's two registers disagree.", "photo and photo_source are reserved fields; currently null pending official image URLs from LGA."]}
+{
+ "api": "Maldives Local Councils Directory",
+ "version": "v1",
+ "base_url": "https://addubeyya.github.io/CouncilRepository/api/v1",
+ "updated": "2026-08-02",
+ "license": "Public information. Source: Local Government Authority (lga.gov.mv).",
+ "source": "Local Government Authority, Republic of Maldives",
+ "totals": {
+  "councils": 186,
+  "island_councils": 179,
+  "city_councils": 5,
+  "atoll_councils": 2,
+  "councillors": 677,
+  "secretary_generals": 0,
+  "atolls": 20
+ },
+ "parties": {
+  "MDP": "Maldivian Democratic Party",
+  "PNC": "People’s National Congress",
+  "IND": "Independent",
+  "MDA": "Maldives Development Alliance",
+  "AP": "Adhaalath Party",
+  "JP": "Jumhooree Party",
+  "DEM": "The Democrats"
+ },
+ "endpoints": {
+  "index": "https://addubeyya.github.io/CouncilRepository/api/v1/index.json",
+  "councils": "https://addubeyya.github.io/CouncilRepository/api/v1/councils.json",
+  "council": "https://addubeyya.github.io/CouncilRepository/api/v1/councils/{council_id}.json",
+  "councillors": "https://addubeyya.github.io/CouncilRepository/api/v1/councillors.json",
+  "atolls": "https://addubeyya.github.io/CouncilRepository/api/v1/atolls.json",
+  "atoll": "https://addubeyya.github.io/CouncilRepository/api/v1/atolls/{atoll_code}.json"
+ },
+ "notes": [
+  "Static JSON over HTTPS with CORS enabled. No key required.",
+  "Councillor names are in Thaana; name_latin is a transliteration for search.",
+  "Secretary Generals are not published by LGA and are absent by design.",
+  "source_note marks records where LGA's two registers disagree.",
+  "lga_id maps to the LGA photo at /storage/councilors/avatars/councilor/{lga_id}.webp"
+ ]
+}
