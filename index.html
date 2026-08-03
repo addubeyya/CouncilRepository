@@ -1146,6 +1146,9 @@ const PEOPLE=[
  {id:"p676",name:"\u07a2\u07a6\u0784\u07b0\u078b\u07aa\ufdf2 \u0790\u07a8\u0783\u07b0\u0799\u07a7\u0782\u07b0",council:"vilufushee",position:"Council Member",rank:3,party:"PNC",phone:"7320873",cat:"councillor",ward:"\u2014",termStart:"2026",termEnd:"2031",ver:"official",photo:null,updated:"2026-08-02"},
 ];
 
+const PHOTOS={
+ "p26":{url:"photos/c026.jpg",source:"Supplied by directory editor, 3 Aug 2026 \u2014 official source URL pending"}
+};
 const SERVICES=["Local administration","Municipal services","Waste management","Harbour services","Land and property","Social services","Sports and recreation","Environmental services","Business permits","Local tourism","Public complaints","Emergency contacts"];
 
 /* ---------------- Helpers ---------------- */
@@ -1236,7 +1239,8 @@ const PARTYCOLOR={MDP:["#F9D423",0],PNC:["#E6007E",1],JP:["#D0021B",1],MDA:["#6A
 function personCard(p,q=""){const c=councilById(p.council);
  const [col,light]=PARTYCOLOR[p.party]||["#8CA0AE",1];
  const label=p.party==="IND"?"Independent":p.party;
- const photo=p.photo?`<img src="${esc(p.photo)}" alt="${esc(p.position)}, ${esc(c.name)}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'ini',textContent:'${esc(initials(latinName(p.name)))}'}))">`
+ const ph=p.photo||(PHOTOS[p.id]&&PHOTOS[p.id].url);
+ const photo=ph?`<img src="${esc(ph)}" alt="${esc(p.position)}, ${esc(c.name)}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'ini',textContent:'${esc(initials(latinName(p.name)))}'}))">`
    :`<span class="ini">${esc(initials(latinName(p.name)))}</span>`;
  return `<article class="pcard photo">
   <div class="pphoto"><span class="ring" style="--pc:${col}"><span class="inner">${photo}</span></span>
