@@ -199,6 +199,22 @@ table.dir tr:hover td{background:#FAFCFD}
 .source-box{background:var(--mist);border:1px dashed var(--line);border-radius:var(--r-sm);padding:11px 13px;font-size:12.5px;color:var(--slate)}
 .source-box b{color:var(--ink)}
 
+/* ---------- Inline edit ---------- */
+.edit-btn{position:absolute;top:16px;right:16px;z-index:2}
+.profile-hero .inner{padding-right:96px}
+.ed{background:rgba(255,255,255,.13);border:1.5px solid rgba(255,255,255,.35);border-radius:8px;
+ color:#fff;font:inherit;padding:5px 9px;width:100%;max-width:520px}
+.ed:focus{outline:2px solid var(--teal);background:rgba(255,255,255,.2)}
+.ed.h1{font-family:var(--disp);font-weight:800;font-size:clamp(20px,3.6vw,28px);letter-spacing:-.015em}
+.ed.sm{font-size:13.5px;max-width:300px}
+.ed option{color:#16303F}
+.ed-dark{border:1.5px solid var(--line);border-radius:8px;font:inherit;font-size:13.5px;padding:6px 9px;width:100%;background:#fff;color:var(--ink)}
+.ed-dark:focus{outline:2px solid var(--teal)}
+.editbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:14px;
+ background:rgba(255,255,255,.1);border:1px dashed rgba(255,255,255,.3);border-radius:10px;padding:10px 12px}
+.editbar label{font-size:12px;font-weight:700;color:#BBD3E4;white-space:nowrap}
+.pending{background:var(--v-amber-bg);border:1px solid #EBD9B4;color:#7A5210;border-radius:var(--r-sm);
+ padding:10px 14px;font-size:13.5px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px}
 /* ---------- Forms ---------- */
 .form{display:grid;gap:14px;max-width:680px}
 .form label{font-size:13px;font-weight:700;color:var(--navy);display:grid;gap:6px}
@@ -1132,6 +1148,11 @@ const SERVICES=["Local administration","Municipal services","Waste management","
 
 /* ---------------- Helpers ---------------- */
 const $=s=>document.querySelector(s);
+let editMode=false;
+const EDITS=(()=>{try{return JSON.parse(localStorage.getItem("mlcd_edits")||"{}")}catch(e){return{}}})();
+function saveEdits(){try{localStorage.setItem("mlcd_edits",JSON.stringify(EDITS))}catch(e){alert("Could not save locally: "+e.message)}}
+function applyEdits(){for(const id in EDITS){const c=COUNCILS.find(x=>x.id===id);if(c)Object.assign(c,EDITS[id]);}}
+function pendingCount(){return Object.keys(EDITS).length}
 const TH_C={'\u0780':'h','\u0781':'sh','\u0782':'n','\u0783':'r','\u0784':'b','\u0785':'lh','\u0786':'k','\u0787':'','\u0788':'v','\u0789':'m','\u078A':'f','\u078B':'dh','\u078C':'th','\u078D':'l','\u078E':'g','\u078F':'gn','\u0790':'s','\u0791':'d','\u0792':'z','\u0793':'t','\u0794':'y','\u0795':'p','\u0796':'j','\u0797':'ch','\u0799':'h','\u079A':'kh','\u079D':'sh','\u079E':'s','\u07A2':'','\u07A3':'gh','\u07A4':'q'};
 const TH_V={'\u07A6':'a','\u07A7':'aa','\u07A8':'i','\u07A9':'ee','\u07AA':'u','\u07AB':'oo','\u07AC':'e','\u07AD':'ey','\u07AE':'o','\u07AF':'oa','\u07B0':''};
 function latinName(s){let o="";for(const ch of String(s)){if(ch===" "){o+=" ";}else if(TH_C[ch]!==undefined)o+=TH_C[ch];else if(TH_V[ch]!==undefined)o+=TH_V[ch];else o+=ch;}
@@ -1163,6 +1184,9 @@ function chrome(active,content){return `
 <nav class="mainnav" aria-label="Main"><div class="wrap"><ul>${NAV.map(([h,l])=>`<li><a href="${h}" class="${active===l?"active":""}">${l}</a></li>`).join("")}</ul></div></nav>
 </header>
 <div class="demo-note" style="background:var(--v-green-bg);border-bottom-color:#BFE0CC;color:#14603C"><div class="wrap"><span aria-hidden="true">✓</span><span><b>All records sourced from the Local Government Authority.</b> 186 councils and 677 elected councillors. Secretary Generals are not published by LGA and remain unlisted. Councillor contact numbers are reproduced as published in the LGA register.</span></div></div>
+${pendingCount()?`<div class="wrap"><div class="pending" style="margin-top:14px">\u270e <b>${pendingCount()} council${pendingCount()>1?"s":""} edited locally.</b> Saved in this browser only.
+ <button class="btn btn-ghost btn-sm" onclick="exportEdits()">\u2193 Export all edits</button>
+ <button class="btn btn-ghost btn-sm" onclick="clearEdits()">Discard all</button></div></div>`:""}
 <main id="main">${content}</main>
 ${footer()}`;}
 
@@ -1286,6 +1310,31 @@ function viewCouncils(params){const q=(params.get("q")||"").trim(),type=params.g
   <tbody>${rows.map(r=>`<tr><td><a href="#/council/${r.c.id}"><b>${hi(r.c.name,q)}</b></a></td><td>${r.c.type}</td><td>${r.c.atoll}. ${r.c.atollName}</td><td>${esc(r.c.island)}</td>
    <td class="thaana">${r.pres?esc(r.pres.name):'<span class="na">N/A</span>'}</td><td><span class="na">Not published</span></td><td>${r.n}</td><td>${na(r.c.phone)}</td><td>${badge(r.c.ver)}</td><td>${r.c.updated}</td></tr>`).join("")}</tbody></table></div>`}
  </section></div>`;}
+function saveCouncil(id){
+ const g=k=>{const el=document.getElementById("e_"+k);return el?el.value.trim():undefined;};
+ const src=g("src");
+ if(!src){alert("A source URL is required. Every change must be traceable to an official source.");return;}
+ const patch={name:g("name"),type:g("type"),jurisdiction:g("jur"),ver:g("ver"),
+  address:g("address"),phone:g("phone"),email:g("email"),website:g("website")||null,
+  facebook:g("facebook")||null,hours:g("hours"),population:g("population"),area:g("area"),
+  source:{name:"Edited locally \u2014 pending review",url:src},
+  updated:new Date().toISOString().slice(0,10),checked:new Date().toISOString().slice(0,10)};
+ Object.keys(patch).forEach(k=>{if(patch[k]===undefined)delete patch[k];});
+ EDITS[id]={...(EDITS[id]||{}),...patch};
+ saveEdits();applyEdits();editMode=false;render();
+}
+function revertCouncil(id){if(!confirm("Discard local changes to this council?"))return;
+ delete EDITS[id];saveEdits();location.reload();}
+function exportEdits(){
+ const rows=[["council_id","field","new_value","source_url","edited_on"]];
+ for(const id in EDITS){const e=EDITS[id];
+  for(const k in e){if(k==="source")continue;
+   rows.push([id,k,typeof e[k]==="object"?JSON.stringify(e[k]):e[k],(e.source&&e.source.url)||"",e.updated||""]);}}
+ if(rows.length===1){alert("No local edits to export.");return;}
+ download("council-edits.csv",toCSV(rows));
+}
+function clearEdits(){if(!confirm("Discard ALL local edits? This cannot be undone."))return;
+ for(const k in EDITS)delete EDITS[k];saveEdits();location.reload();}
 function setSort(k){if(sortKey===k)sortAsc=!sortAsc;else{sortKey=k;sortAsc=true;}render();}
 let qTimer;function qNav(base,val,type){clearTimeout(qTimer);qTimer=setTimeout(()=>{const p=new URLSearchParams();if(type)p.set("type",type);if(val)p.set("q",val);history.replaceState(null,"",base+(p.toString()?"?"+p.toString():""));render(true);},250);}
 
@@ -1294,23 +1343,41 @@ function viewCouncil(id){const c=councilById(id);if(!c)return `<div class="wrap"
  const cllrs=PEOPLE.filter(p=>p.council===id&&p.cat==="councillor");
  return `<div class="wrap">
  <nav class="crumbs" aria-label="Breadcrumb"><a href="#/">Home</a> › <a href="#/councils">Councils</a> › <a href="#/atoll/${c.atoll}">${c.atoll}. ${c.atollName}</a> › ${esc(c.name)}</nav>
- <div class="profile-hero"><div class="inner"><span class="logo">${c.atoll}</span>
-  <div><div class="meta" style="margin-bottom:7px"><span class="tag type" style="background:rgba(255,255,255,.14);color:#8FD6CE">${c.type}</span></div>
-  <h1>${esc(c.name)}</h1><div class="sub">${esc(c.jurisdiction)} · ${badge(c.ver)}</div></div></div></div>
+ <div class="profile-hero">
+  ${editMode?"":`<button class="btn btn-ghost btn-sm edit-btn" onclick="editMode=true;render()">\u270e Edit</button>`}
+  <div class="inner"><span class="logo">${c.atoll}</span>
+  ${editMode?`<div style="flex:1;min-width:260px">
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+     <select class="ed sm" id="e_type">${["Island Council","Atoll Council","City Council"].map(t=>`<option ${t===c.type?"selected":""}>${t}</option>`).join("")}</select>
+     <select class="ed sm" id="e_ver">${Object.keys(VLABEL).map(v=>`<option value="${v}" ${v===c.ver?"selected":""}>${VLABEL[v]}</option>`).join("")}</select></div>
+    <input class="ed h1" id="e_name" value="${esc(c.name)}" aria-label="Council name">
+    <input class="ed sm" id="e_jur" style="margin-top:8px;max-width:520px" value="${esc(c.jurisdiction)}" aria-label="Jurisdiction">
+    <div class="editbar">
+     <label for="e_src">Source URL</label>
+     <input class="ed sm" id="e_src" style="flex:1;min-width:180px" placeholder="https:// official source" value="${esc((c.source&&c.source.url)||"")}">
+     <button class="btn btn-primary btn-sm" onclick="saveCouncil('${c.id}')">Save</button>
+     <button class="btn btn-ghost btn-sm" onclick="editMode=false;render()">Cancel</button>
+    </div></div>`
+   :`<div><div class="meta" style="margin-bottom:7px"><span class="tag type" style="background:rgba(255,255,255,.14);color:#8FD6CE">${c.type}</span></div>
+  <h1>${esc(c.name)}</h1><div class="sub">${esc(c.jurisdiction)} \u00b7 ${badge(c.ver)}</div></div>`}
+  </div></div>
  <section class="block"><div class="twocol">
   <div style="display:grid;gap:18px">
+   ${EDITS[c.id]?`<div class="pending"><span>\u270e <b>Local edits not published.</b> These changes are saved in this browser only \u2014 they are not visible to anyone else until exported and committed.</span>
+     <button class="btn btn-ghost btn-sm" onclick="exportEdits()">\u2193 Export edits</button>
+     <button class="btn btn-ghost btn-sm" onclick="revertCouncil('${c.id}')">Revert</button></div>`:""}
    ${c.note?`<div class="panel" style="border-color:#EBD9B4;background:var(--v-amber-bg)"><h3 style="color:#7A5210">\u26a0 Source discrepancy</h3><p style="font-size:13.5px;color:#7A5210;margin:0">${esc(c.note)}</p></div>`:""}
    <div class="panel"><h3>Council overview</h3>
     <p style="font-size:14px;color:var(--slate);margin-bottom:14px">${esc(c.about)}</p>
     <dl class="dl">
-     <dt>Official address</dt><dd>${esc(c.address)}</dd>
-     <dt>Official phone</dt><dd>${na(c.phone)}</dd>
-     <dt>Official email</dt><dd>${na(c.email)}</dd>
-     <dt>Website</dt><dd>${c.website?`<a href="${c.website}">${c.website}</a>`:'<span class="na">Not publicly available</span>'}</dd>
-     <dt>Facebook</dt><dd>${c.facebook?`<a href="${c.facebook}">${c.facebook}</a>`:'<span class="na">Not publicly available</span>'}</dd>
-     <dt>Office hours</dt><dd>${esc(c.hours)}</dd>
-     <dt>Population</dt><dd>${na(c.population)}</dd>
-     <dt>Geographic area</dt><dd>${na(c.area)}</dd>
+     ${[["address","Official address"],["phone","Official phone"],["email","Official email"],
+        ["website","Website"],["facebook","Facebook"],["hours","Office hours"],
+        ["population","Population"],["area","Geographic area"]].map(([k,lab])=>
+      `<dt>${lab}</dt><dd>${editMode
+        ?`<input class="ed-dark" id="e_${k}" value="${esc(c[k]==null?"":c[k])}" aria-label="${lab}">`
+        :(k==="website"||k==="facebook")
+          ?(c[k]?`<a href="${esc(c[k])}">${esc(c[k])}</a>`:'<span class="na">Not publicly available</span>')
+          :na(c[k])}</dd>`).join("")}
      <dt>Last checked</dt><dd>${c.checked}</dd>
      <dt>Last updated</dt><dd>${c.updated}</dd></dl></div>
    <div class="panel"><h3>Leadership</h3><div class="grid grid-2">${lead.map(p=>personCard(p)).join("")||'<span class="na">Not publicly available</span>'}</div></div>
@@ -1463,7 +1530,8 @@ function viewAbout(){return `<div class="wrap"><section class="block" style="max
  </div></section></div>`;}
 
 /* ---------------- Router ---------------- */
-function render(keepScroll){const hash=location.hash||"#/";const [path,qs]=hash.slice(1).split("?");const params=new URLSearchParams(qs||"");
+function render(keepScroll){const hash=location.hash||"#/";
+ if(!hash.startsWith("#/council/"))editMode=false;const [path,qs]=hash.slice(1).split("?");const params=new URLSearchParams(qs||"");
  let active="Home",content;
  if(path==="/"||path==="")content=viewHome();
  else if(path==="/councils"){const t=params.get("type");active=t?(t.split(" ")[0]+" Councils"):"All Councils";
@@ -1482,6 +1550,7 @@ function render(keepScroll){const hash=location.hash||"#/";const [path,qs]=hash.
  if(keepScroll)window.scrollTo(0,scroll);else window.scrollTo(0,0);
  const inp=document.querySelector('.toolbar input[type=search]');
  if(keepScroll&&inp){inp.focus();const v=inp.value;inp.value="";inp.value=v;}}
+applyEdits();
 window.addEventListener("hashchange",()=>render());
 render();
 </script>
