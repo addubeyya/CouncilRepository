@@ -148,6 +148,8 @@ h2.sec{font-family:var(--disp);font-weight:800;font-size:clamp(21px,3vw,27px);co
 .pchip.light{color:#fff}
 .pcard.photo{align-items:center;text-align:center;padding-top:20px}
 .pcard.photo h3{font-size:19px;line-height:1.35}
+.latin{font-size:13.5px;color:var(--slate);font-weight:600;letter-spacing:.01em;margin-top:1px}
+.latin-sm{font-size:12px;color:#8CA0AE;font-weight:500;display:block}
 
 .avatar{border-radius:50%;background:linear-gradient(150deg,var(--ocean),var(--navy));color:#fff;display:grid;place-items:center;font-family:var(--disp);font-weight:700;flex:none}
 .avatar.teal{background:linear-gradient(150deg,var(--teal),var(--teal-dark))}
@@ -1153,10 +1155,19 @@ const EDITS=(()=>{try{return JSON.parse(localStorage.getItem("mlcd_edits")||"{}"
 function saveEdits(){try{localStorage.setItem("mlcd_edits",JSON.stringify(EDITS))}catch(e){alert("Could not save locally: "+e.message)}}
 function applyEdits(){for(const id in EDITS){const c=COUNCILS.find(x=>x.id===id);if(c)Object.assign(c,EDITS[id]);}}
 function pendingCount(){return Object.keys(EDITS).length}
-const TH_C={'\u0780':'h','\u0781':'sh','\u0782':'n','\u0783':'r','\u0784':'b','\u0785':'lh','\u0786':'k','\u0787':'','\u0788':'v','\u0789':'m','\u078A':'f','\u078B':'dh','\u078C':'th','\u078D':'l','\u078E':'g','\u078F':'gn','\u0790':'s','\u0791':'d','\u0792':'z','\u0793':'t','\u0794':'y','\u0795':'p','\u0796':'j','\u0797':'ch','\u0799':'h','\u079A':'kh','\u079D':'sh','\u079E':'s','\u07A2':'','\u07A3':'gh','\u07A4':'q'};
+const TH_C={'\u0780':'h','\u0781':'sh','\u0782':'n','\u0783':'r','\u0784':'b','\u0785':'lh','\u0786':'k','\u0787':'','\u0788':'v','\u0789':'m','\u078A':'f','\u078B':'dh','\u078C':'th','\u078D':'l','\u078E':'g','\u078F':'gn','\u0790':'s','\u0791':'d','\u0792':'z','\u0793':'t','\u0794':'y','\u0795':'p','\u0796':'j','\u0797':'ch','\u0798':'th','\u0799':'h','\u079A':'kh','\u079B':'z','\u079C':'z','\u079D':'sh','\u079E':'s','\u079F':'z','\u07A0':'t','\u07A1':'z','\u07A2':'','\u07A3':'gh','\u07A4':'q','\u07A5':'w'};
 const TH_V={'\u07A6':'a','\u07A7':'aa','\u07A8':'i','\u07A9':'ee','\u07AA':'u','\u07AB':'oo','\u07AC':'e','\u07AD':'ey','\u07AE':'o','\u07AF':'oa','\u07B0':''};
-function latinName(s){let o="";for(const ch of String(s)){if(ch===" "){o+=" ";}else if(TH_C[ch]!==undefined)o+=TH_C[ch];else if(TH_V[ch]!==undefined)o+=TH_V[ch];else o+=ch;}
- return o.split(/\s+/).filter(Boolean).map(w=>w.charAt(0).toUpperCase()+w.slice(1)).join(" ")||String(s);}
+function latinName(s){let o="";
+ for(const ch of String(s)){
+  if(ch===" ")o+=" ";
+  else if(TH_C[ch]!==undefined)o+=TH_C[ch];
+  else if(TH_V[ch]!==undefined)o+=TH_V[ch];
+  else if(/[\u0780-\u07BF]/.test(ch))continue;   // any unmapped Thaana mark: skip, never leak
+  else o+=ch;}
+ return o.replace(/\s+/g," ").trim().split(" ").filter(Boolean).map(w=>{
+   w=w.replace(/u$/,"");                          // drop the word-final short vowel
+   w=w.replace(/dh$/,"d").replace(/th$/,"th");
+   return w?w.charAt(0).toUpperCase()+w.slice(1):"";}).filter(Boolean).join(" ")||String(s);}
 const councilById=id=>COUNCILS.find(c=>c.id===id);
 const initials=n=>n.split(/\s+/).map(w=>w[0]).slice(0,2).join("").toUpperCase();
 const badge=(v,extra="")=>`<span class="badge ${VCLASS[v]}" title="${VLABEL[v]}">${VLABEL[v]}</span>${extra}`;
@@ -1212,7 +1223,7 @@ function councilCard(c,q=""){const pres=PEOPLE.find(p=>p.council===c.id&&(p.posi
    <div class="meta"><span class="tag">${c.atoll}. ${c.atollName}</span><span class="tag type">${c.type}</span></div>
    <h3>${hi(c.name,q)}${c.note?' <span class="badge b-partial" style="vertical-align:2px">source note</span>':""}</h3>
    <div class="kv">
-    <span><b>${pres?pres.position:"President"}:</b> ${pres?'<span class="thaana">'+esc(pres.name)+'</span>':'<span class="na">Not publicly available</span>'}</span>
+    <span><b>${pres?pres.position:"President"}:</b> ${pres?'<span class="thaana">'+esc(pres.name)+'</span><span class="latin-sm">'+esc(latinName(pres.name))+'</span>':'<span class="na">Not publicly available</span>'}</span>
     <span><b>Secretary General:</b> <span class="na">Not published by LGA</span></span>
     <span><b>Councillors:</b> ${n} \u00b7 <b>Office:</b> ${na(c.phone)}</span>
    </div>
@@ -1231,6 +1242,7 @@ function personCard(p,q=""){const c=councilById(p.council);
   <div class="pphoto"><span class="ring" style="--pc:${col}"><span class="inner">${photo}</span></span>
    <span class="pchip ${light?"light":""}" style="--pc:${col}">${esc(label)}</span></div>
   <h3 class="thaana">${esc(p.name)}</h3>
+  <div class="latin">${esc(latinName(p.name))}</div>
   <div class="pos">${p.position}</div>
   <div class="sub">${esc(c.name)} \u00b7 ${c.atoll}. ${esc(c.island)}</div>
   <div class="plist" style="text-align:left;width:100%">
@@ -1308,7 +1320,7 @@ function viewCouncils(params){const q=(params.get("q")||"").trim(),type=params.g
   viewMode==="grid"?`<div class="grid grid-3">${list.map(c=>councilCard(c,q)).join("")}</div>`:
   `<div class="tablewrap"><table class="dir"><thead><tr>${th("Council","name")}${th("Type","type")}${th("Atoll","atollName")}${th("Island / jurisdiction","island")}<th>President / Mayor</th><th>Secretary General</th><th>Cllrs</th><th>Phone</th><th>Verification</th>${th("Updated","updated")}</tr></thead>
   <tbody>${rows.map(r=>`<tr><td><a href="#/council/${r.c.id}"><b>${hi(r.c.name,q)}</b></a></td><td>${r.c.type}</td><td>${r.c.atoll}. ${r.c.atollName}</td><td>${esc(r.c.island)}</td>
-   <td class="thaana">${r.pres?esc(r.pres.name):'<span class="na">N/A</span>'}</td><td><span class="na">Not published</span></td><td>${r.n}</td><td>${na(r.c.phone)}</td><td>${badge(r.c.ver)}</td><td>${r.c.updated}</td></tr>`).join("")}</tbody></table></div>`}
+   <td>${r.pres?'<span class="thaana">'+esc(r.pres.name)+'</span><span class="latin-sm">'+esc(latinName(r.pres.name))+'</span>':'<span class="na">N/A</span>'}</td><td><span class="na">Not published</span></td><td>${r.n}</td><td>${na(r.c.phone)}</td><td>${badge(r.c.ver)}</td><td>${r.c.updated}</td></tr>`).join("")}</tbody></table></div>`}
  </section></div>`;}
 function saveCouncil(id){
  const g=k=>{const el=document.getElementById("e_"+k);return el?el.value.trim():undefined;};
@@ -1398,7 +1410,7 @@ function viewPeople(kind,params){const q=(params.get("q")||"").trim();
  const fAtoll=params.get("atoll")||"",fType=params.get("ctype")||"",fPos=params.get("pos")||"";
  let list=PEOPLE.filter(p=>kind==="sg"?p.cat==="sg":p.cat!=="sg");
  list=list.filter(p=>{const c=councilById(p.council);
-  return (!q||p.name.includes(q)||p.name.toLowerCase().includes(q.toLowerCase())||c.name.toLowerCase().includes(q.toLowerCase())||c.island.toLowerCase().includes(q.toLowerCase())||(PARTY[p.party]||"").toLowerCase().includes(q.toLowerCase())||p.party.toLowerCase()===q.toLowerCase())
+  return (!q||p.name.includes(q)||latinName(p.name).toLowerCase().includes(q.toLowerCase())||c.name.toLowerCase().includes(q.toLowerCase())||c.island.toLowerCase().includes(q.toLowerCase())||(PARTY[p.party]||"").toLowerCase().includes(q.toLowerCase())||p.party.toLowerCase()===q.toLowerCase())
    &&(!fAtoll||c.atoll===fAtoll)&&(!fType||c.type===fType)&&(!fPos||p.position===fPos)&&(!params.get("party")||p.party===params.get("party"));});
  const positions=[...new Set(PEOPLE.filter(p=>kind==="sg"?p.cat==="sg":p.cat!=="sg").map(p=>p.position))];
  const title=kind==="sg"?"Secretary General directory":"Councillor directory";
