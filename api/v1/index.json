@@ -37,6 +37,16 @@
   "Councillor names are in Thaana; name_latin is a transliteration for search.",
   "source_note marks records where LGA's two registers disagree.",
   "lga_id maps to the LGA photo at /storage/councilors/avatars/councilor/{lga_id}.webp",
-  "Secretary Generals sourced from the Civil Service Commission; 133 of 186 councils currently have one listed."
- ]
+  "Secretary Generals sourced from the Civil Service Commission; 133 of 186 councils currently have one listed.",
+  "Councillor photos and party colours sourced from the LGA councillors dataset; 526 of 677 have a portrait."
+ ],
+ "party_colors": {
+  "MDP": "#FFD700",
+  "PNC": "#2DD6C1",
+  "JP": "#EF4444",
+  "MDA": "#F97316",
+  "AP": "#22C55E",
+  "DEM": "#89CFF0",
+  "IND": "#6B7280"
+ }
 }
