@@ -7,7 +7,7 @@
 <meta name="description" content="A central public directory of Island Councils, Atoll Councils, elected Councillors, Mayors and Secretary Generals across the Maldives.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Public+Sans:wght@400;500;600;700&family=Noto+Sans+Thaana:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Public+Sans:wght@400;500;600;700&family=Noto+Sans+Thaana:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root{
   --navy:#0A2540; --navy-2:#0E3157; --ocean:#155E92; --ocean-soft:#EAF3F9;
@@ -21,13 +21,13 @@
   --r:14px; --r-sm:9px;
   --shadow:0 1px 2px rgba(10,37,64,.06),0 6px 18px rgba(10,37,64,.07);
   --shadow-lg:0 2px 4px rgba(10,37,64,.08),0 14px 34px rgba(10,37,64,.12);
-  --disp:'Archivo',system-ui,sans-serif; --body:'Public Sans',system-ui,sans-serif;
+  --disp:'Bricolage Grotesque',system-ui,sans-serif; --body:'Public Sans',system-ui,sans-serif;
   --thaana:'Noto Sans Thaana',sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}}
-body{font-family:var(--body);background:var(--mist);color:var(--ink);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+body{font-variant-numeric:tabular-nums;font-family:var(--body);background:var(--mist);color:var(--ink);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
 a{color:var(--ocean);text-decoration:none}
 a:hover{text-decoration:underline}
 button{font-family:var(--body);cursor:pointer}
@@ -68,10 +68,10 @@ nav.mainnav a.active{color:var(--navy);border-bottom-color:var(--teal)}
 /* ---------- Hero ---------- */
 .hero{background:linear-gradient(160deg,var(--navy) 0%,#0D3B66 55%,#11507C 100%);color:#fff;position:relative;overflow:hidden}
 .hero-ring{position:absolute;right:-90px;top:-60px;opacity:.5;pointer-events:none}
-.hero-inner{position:relative;padding:52px 0 46px}
+.hero-inner{position:relative;padding:56px 0 44px}
 .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#8FD6CE;margin-bottom:14px}
-.eyebrow::before{content:"";width:22px;height:2px;background:var(--teal);border-radius:2px}
-h1.hero-h{font-family:var(--disp);font-weight:800;font-size:clamp(30px,5.5vw,50px);line-height:1.06;letter-spacing:-.02em;max-width:14ch}
+
+h1.hero-h{font-family:var(--disp);font-weight:800;font-size:clamp(32px,6vw,54px);line-height:1.02;letter-spacing:-.03em;max-width:13ch}
 .hero-thaana{font-family:var(--thaana);direction:rtl;text-align:left;font-size:clamp(16px,2.5vw,21px);color:#9FC3DB;margin-top:10px}
 .hero-sub{max-width:56ch;color:#C6DAE9;margin-top:14px;font-size:16.5px}
 .searchbar{margin-top:26px;max-width:640px;display:flex;background:#fff;border-radius:999px;padding:6px;box-shadow:var(--shadow-lg)}
@@ -86,13 +86,28 @@ h1.hero-h{font-family:var(--disp);font-weight:800;font-size:clamp(30px,5.5vw,50p
 /* ---------- Stats ---------- */
 .stats{background:#fff;border-bottom:1px solid var(--line)}
 .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line)}
+.stat b{letter-spacing:-.02em}
 .stat{background:#fff;padding:18px 16px}
 .stat b{font-family:var(--disp);font-weight:800;font-size:26px;color:var(--navy);display:block;font-variant-numeric:tabular-nums}
 .stat span{font-size:12.5px;color:var(--slate);font-weight:600}
 .stat small{display:block;font-size:11.5px;color:#8CA0AE;margin-top:2px}
 @media(max-width:720px){.stats-grid{grid-template-columns:repeat(2,1fr)}}
 
-/* ---------- Atoll band (signature) ---------- */
+/* ---------- Atoll rail (signature): north-to-south, height = council count ---------- */
+.rail{background:#fff;border-bottom:1px solid var(--line);padding:0}
+.rail-inner{display:flex;align-items:flex-end;gap:2px;overflow-x:auto;scrollbar-width:none;padding:16px 0 0}
+.rail-inner::-webkit-scrollbar{display:none}
+.rail-i{flex:1 0 auto;min-width:46px;display:flex;flex-direction:column;align-items:center;gap:6px;
+ text-decoration:none!important;padding-bottom:12px;border-bottom:2px solid transparent;transition:border-color .15s}
+.rail-i:hover{border-bottom-color:var(--teal)}
+.rail-i:hover .bar{background:var(--teal)}
+.bar{width:100%;max-width:26px;background:var(--ocean-soft);border-radius:3px 3px 0 0;transition:background .15s}
+.rail-i.city .bar{background:var(--teal-soft)}
+.rail-code{font-family:var(--disp);font-weight:700;font-size:12.5px;color:var(--navy);letter-spacing:-.01em}
+.rail-n{font-size:10px;color:#8CA0AE;font-weight:600}
+.rail-cap{display:flex;justify-content:space-between;font-size:11px;letter-spacing:.12em;
+ text-transform:uppercase;color:#8CA0AE;font-weight:700;padding:0 0 10px}
+/* ---------- Atoll band (legacy) ---------- */
 .atollband{padding:26px 0 8px}
 .band-label{font-size:12px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--slate);margin-bottom:10px;display:flex;gap:10px;align-items:center}
 .band-label::after{content:"";flex:1;height:1px;background:var(--line)}
@@ -104,9 +119,21 @@ h1.hero-h{font-family:var(--disp);font-weight:800;font-size:clamp(30px,5.5vw,50p
 .chip.city b{color:var(--teal-dark)}
 
 /* ---------- Sections / cards ---------- */
-section.block{padding:30px 0}
+.faces{display:flex;align-items:center;gap:-8px;padding:0}
+.faces .f{width:38px;height:38px;border-radius:50%;border:2.5px solid #fff;background:var(--mist);
+ overflow:hidden;display:grid;place-items:center;margin-left:-10px;box-shadow:0 1px 3px rgba(10,37,64,.14);flex:none}
+.faces .f:first-child{margin-left:0}
+.faces .f img{width:100%;height:100%;object-fit:cover}
+.faces .f span{font-family:var(--disp);font-weight:700;font-size:12px;color:var(--slate)}
+.faces .more{font-size:12px;color:var(--slate);font-weight:600;margin-left:10px}
+.card-top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px 0}
+.atoll-tag{font-family:var(--disp);font-weight:700;font-size:11.5px;letter-spacing:.04em;
+ color:var(--ocean);background:var(--ocean-soft);border-radius:6px;padding:3px 8px}
+.card h3{margin-top:2px}
+
+section.block{padding:38px 0}
 .sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:16px;flex-wrap:wrap}
-h2.sec{font-family:var(--disp);font-weight:800;font-size:clamp(21px,3vw,27px);color:var(--navy);letter-spacing:-.015em}
+h2.sec{font-family:var(--disp);font-weight:700;font-size:clamp(21px,3vw,28px);color:var(--navy);letter-spacing:-.02em}
 .sec-desc{color:var(--slate);font-size:14.5px;max-width:64ch;margin-top:4px}
 .grid{display:grid;gap:16px}
 .grid-3{grid-template-columns:repeat(3,1fr)}
@@ -174,7 +201,7 @@ h2.sec{font-family:var(--disp);font-weight:800;font-size:clamp(21px,3vw,27px);co
 
 /* ---------- Table ---------- */
 .tablewrap{background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);overflow-x:auto}
-table.dir{width:100%;border-collapse:collapse;font-size:13.5px;min-width:880px}
+table.dir{width:100%;border-collapse:collapse;font-size:13.5px;min-width:760px}
 table.dir th{background:var(--mist);text-align:left;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--slate);padding:11px 13px;border-bottom:1px solid var(--line);cursor:pointer;user-select:none;white-space:nowrap}
 table.dir th .arrow{opacity:.45;font-size:10px}
 table.dir td{padding:11px 13px;border-bottom:1px solid var(--line);vertical-align:top}
@@ -1857,7 +1884,7 @@ function avatar(name,size=52,cls=""){return `<span class="avatar ${cls}" style="
 /* ---------------- Chrome ---------------- */
 const NAV=[["#/","Home"],["#/councils","All Councils"],["#/councils?type=Island Council","Island Councils"],["#/councils?type=Atoll Council","Atoll Councils"],["#/councils?type=City Council","City Councils"],["#/councillors","Councillors"],["#/sg","Secretary Generals"],["#/atolls","Browse by Atoll"],["#/about","About"],["#/submit","Contact"]];
 function chrome(active,content){return `
-<div class="govbar"><div class="wrap"><span><strong>Maldives Local Councils Directory</strong> · Independent public-information resource</span><span>Last database update: 2 Aug 2026</span></div></div>
+<div class="govbar"><div class="wrap"><span>Independent public-information resource \u00b7 Sources: <strong>Local Government Authority</strong> and <strong>Civil Service Commission</strong></span><span>Updated 3 Aug 2026</span></div></div>
 <header class="site"><div class="wrap masthead">
  <a href="#/" style="display:flex;gap:12px;align-items:center;text-decoration:none">
   <span class="crest"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="#8FD6CE" stroke-width="1.4" stroke-dasharray="2.4 2.6"/><circle cx="12" cy="12" r="3.2" fill="#12A296"/></svg></span>
@@ -1867,10 +1894,6 @@ function chrome(active,content){return `
 </div>
 <nav class="mainnav" aria-label="Main"><div class="wrap"><ul>${NAV.map(([h,l])=>`<li><a href="${h}" class="${active===l?"active":""}">${l}</a></li>`).join("")}</ul></div></nav>
 </header>
-<div class="demo-note" style="background:var(--v-green-bg);border-bottom-color:#BFE0CC;color:#14603C"><div class="wrap"><span aria-hidden="true">✓</span><span><b>All records sourced from the Local Government Authority.</b> 186 councils and 677 elected councillors. Secretary Generals are sourced separately from the Civil Service Commission. Councillor contact numbers are reproduced as published in the LGA register.</span></div></div>
-${pendingCount()?`<div class="wrap"><div class="pending" style="margin-top:14px">\u270e <b>${pendingCount()} council${pendingCount()>1?"s":""} edited locally.</b> Saved in this browser only.
- <button class="btn btn-ghost btn-sm" onclick="exportEdits()">\u2193 Export all edits</button>
- <button class="btn btn-ghost btn-sm" onclick="clearEdits()">Discard all</button></div></div>`:""}
 <main id="main">${content}</main>
 ${footer()}`;}
 
@@ -1887,31 +1910,31 @@ function footer(){return `<footer class="site"><div class="wrap">
 </div></footer>`;}
 
 /* ---------------- Reusable cards ---------------- */
-function councilCard(c,q=""){const pres=PEOPLE.find(p=>p.council===c.id&&(p.position==="Council President"||p.position==="Mayor"));
+function councilCard(c,q=""){
+ const pres=PEOPLE.find(p=>p.council===c.id&&(p.position==="Council President"||p.position==="Mayor"));
  const sg=PEOPLE.find(p=>p.council===c.id&&p.cat==="sg");
  const n=PEOPLE.filter(p=>p.council===c.id&&p.cat!=="sg").length;
+ const face=p=>{const u=photoFor(p);
+   return `<span class="f">${u?`<img src="${esc(u)}" alt="" loading="lazy" onerror="this.remove()">`
+     :`<span>${esc(initials(latinName(p.name)))}</span>`}</span>`;};
+ const crew=PEOPLE.filter(p=>p.council===c.id&&p.rank<=2).slice(0,2).concat(sg?[sg]:[]);
  return `<article class="card">
-  <div class="card-img" style="background:${c.grad}" role="img" aria-label="${c.island} placeholder image"><span class="logo">${c.atoll}</span></div>
+  <div class="card-top"><span class="atoll-tag">${c.atoll}. ${esc(c.atollName)}</span>
+   <span class="tag type">${c.type.replace(" Council","")}</span></div>
   <div class="card-body">
-   <div class="meta"><span class="tag">${c.atoll}. ${c.atollName}</span><span class="tag type">${c.type}</span></div>
    <h3>${hi(c.name,q)}${c.note?' <span class="badge b-partial" style="vertical-align:2px">source note</span>':""}</h3>
+   <div class="faces">${crew.map(face).join("")}${n>2?`<span class="more">+${n-2} councillors</span>`:""}</div>
    <div class="kv">
-    <span><b>${pres?pres.position:"President"}:</b> ${pres?'<span class="thaana">'+esc(pres.name)+'</span><span class="latin-sm">'+esc(latinName(pres.name))+'</span>':'<span class="na">Not publicly available</span>'}</span>
-    <span><b>Secretary General:</b> ${sg?'<span>'+esc(sg.name)+'</span>':'<span class="na">Not currently listed by CSC</span>'}</span>
-    <span><b>Councillors:</b> ${n} \u00b7 <b>Office:</b> ${na(c.phone)}</span>
+    <span><b>${pres?pres.position:"President"}:</b> ${pres?'<span class="thaana">'+esc(pres.name)+'</span> <span style="color:#8CA0AE">'+esc(latinName(pres.name))+'</span>':'<span class="na">Not listed</span>'}</span>
+    <span><b>Secretary General:</b> ${sg?esc(sg.name):'<span class="na">Not listed</span>'}</span>
+    <span><b>Office:</b> ${na(c.phone)}</span>
    </div>
-   ${badge(c.ver)}
-   <div class="card-foot"><span>Updated ${c.updated}</span><a class="btn btn-navy btn-sm" href="#/council/${c.id}">View council</a></div>
+   <div class="card-foot"><span>${badge(c.ver)}</span><a class="btn btn-navy btn-sm" href="#/council/${c.id}">View council</a></div>
   </div></article>`;}
 
 // Party colours as published by LGA
 const PARTYCOLOR={MDP:["#FFD700",0],PNC:["#2DD6C1",0],JP:["#EF4444",1],MDA:["#F97316",1],
  AP:["#22C55E",1],DEM:["#89CFF0",0],IND:["#6B7280",1]};
-function photoFallback(img,ini){
- const alt=img.getAttribute("data-alt");
- if(alt&&img.src!==alt){img.removeAttribute("data-alt");img.src=alt;return;}
- img.replaceWith(Object.assign(document.createElement("span"),{className:"ini",textContent:ini}));
-}
 function personCard(p,q=""){const c=councilById(p.council);
  const isDv=/[\u0780-\u07BF]/.test(p.name);const isSG=p.cat==="sg";
  const [col,light]=isSG?["#0A2540",1]:(PARTYCOLOR[p.party]||["#8CA0AE",1]);
@@ -1940,15 +1963,11 @@ function viewHome(){
  const cty=COUNCILS.filter(c=>c.type==="City Council").length;
  const atl=COUNCILS.filter(c=>c.type==="Atoll Council").length;
  const leaders=PEOPLE.filter(p=>p.rank<=2).length;
- const stats=[[String(COUNCILS.length),"Councils listed","LGA registers"],[String(isl),"Island councils","178 in LGA\u2019s councillor register, +1 contact-register only"],
-  [String(cty),"City councils","matches LGA"],[String(atl),"Atoll councils","import in progress"],
-  [String(PEOPLE.length),"Elected councillors","matches LGA total"],[String(leaders),"Presidents, mayors & deputies","2026\u20132031 term"],
-  [String(PEOPLE.filter(p=>p.cat==="sg").length),"Secretary Generals","source: Civil Service Commission"],["20 of 20","Atolls covered",""]];
+ const maxA=Math.max(...ATOLLS.map(a=>COUNCILS.filter(c=>c.atoll===a.code).length));
+ const stats=[[String(COUNCILS.length),"Councils"],[String(PEOPLE.filter(p=>p.cat!=="sg").length),"Elected councillors"],
+  [String(PEOPLE.filter(p=>p.cat==="sg").length),"Secretary Generals"],["20","Atolls"]];
  return `
-<div class="hero"><svg class="hero-ring" width="420" height="420" viewBox="0 0 420 420" aria-hidden="true">
-  <circle cx="210" cy="210" r="150" fill="none" stroke="#12A296" stroke-width="2" stroke-dasharray="3 14" stroke-linecap="round"/>
-  <circle cx="210" cy="210" r="102" fill="none" stroke="#3E7CA6" stroke-width="2" stroke-dasharray="2 18" stroke-linecap="round"/>
-  <circle cx="330" cy="118" r="7" fill="#12A296"/><circle cx="95" cy="260" r="5" fill="#3E7CA6"/><circle cx="285" cy="330" r="4" fill="#8FD6CE"/></svg>
+<div class="hero">
  <div class="wrap hero-inner">
   <span class="eyebrow">Public information · Republic of Maldives</span>
   <h1 class="hero-h">Maldives Local Councils Directory</h1>
@@ -1957,17 +1976,19 @@ function viewHome(){
   <form class="searchbar" role="search" onsubmit="event.preventDefault();location.hash='#/councils?q='+encodeURIComponent(this.q.value)">
    <input name="q" type="search" placeholder="Search council, island, councillor, atoll or Secretary General" aria-label="Search the directory">
    <button type="submit">Search</button></form>
-  <div class="quicknav">
-   <a href="#/councils">Browse all councils</a><a href="#/councils?type=Island Council">Island councils</a>
-   <a href="#/councils?type=Atoll Council">Atoll councils</a><a href="#/councils?type=City Council">City councils</a>
-   <a href="#/councillors">Councillors</a><a href="#/sg">Secretary Generals</a>
-   <a href="#/atolls">Browse by atoll</a><a href="#/submit">Submit a correction</a></div>
  </div></div>
-<div class="stats"><div class="wrap"><div class="stats-grid">${stats.map(s=>`<div class="stat"><b>${s[0]}</b><span>${s[1]}</span><small>${s[2]}</small></div>`).join("")}</div></div></div>
+<div class="stats"><div class="wrap"><div class="stats-grid">${stats.map(s=>`<div class="stat"><b>${s[0]}</b><span>${s[1]}</span></div>`).join("")}</div></div></div>
 <div class="wrap">
- <div class="atollband"><div class="band-label">Atolls, north to south</div>
-  <div class="chips">${ATOLLS.map(a=>`<a class="chip" href="#/atoll/${a.code}"><b>${a.code}.</b><span>${a.name}</span></a>`).join("")}
-   ${CITIES.map(c=>`<a class="chip city" href="#/councils?type=City Council"><b>◆</b><span>${c.name}</span></a>`).join("")}</div></div>
+ </div></div>
+<div class="rail"><div class="wrap">
+ <div class="rail-cap"><span>North</span><span>Councils by atoll</span><span>South</span></div>
+ <div class="rail-inner">${ATOLLS.map(a=>{const n=COUNCILS.filter(c=>c.atoll===a.code).length;
+   const h=Math.max(10,Math.round(n/maxA*56));
+   return `<a class="rail-i ${a.city?"city":""}" href="#/atoll/${a.code}" title="${a.code}. ${a.name} \u2014 ${n} councils">
+    <span class="rail-n">${n}</span><span class="bar" style="height:${h}px"></span>
+    <span class="rail-code">${a.code}</span></a>`;}).join("")}</div>
+</div></div>
+<div class="wrap">
  <section class="block"><div class="sec-head"><div><h2 class="sec">Featured councils</h2><p class="sec-desc">Council records with official contacts and elected leadership as published by the Local Government Authority.</p></div>
   <a class="btn btn-ghost btn-sm" href="#/councils">View all →</a></div>
   <div class="grid grid-3">${COUNCILS.slice(0,6).map(c=>councilCard(c)).join("")}</div></section>
