@@ -118,6 +118,14 @@ h1.hero-h{font-family:var(--disp);font-weight:800;font-size:clamp(32px,6vw,54px)
 .chip span{font-size:10.5px;color:var(--slate);font-weight:600;white-space:nowrap}
 .chip.city b{color:var(--teal-dark)}
 
+/* ---------- Seat composition ---------- */
+.seats{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.seatrow{display:flex;gap:3px;align-items:flex-end}
+.seat{width:11px;height:11px;border-radius:50%;background:var(--pc,#8CA0AE);flex:none}
+.seat.head{width:14px;height:14px;box-shadow:0 0 0 2px #fff,0 0 0 3.5px var(--pc,#8CA0AE)}
+.seat-label{font-size:12px;font-weight:700;color:var(--ink);letter-spacing:.01em}
+.seat-label i{font-style:normal;font-weight:600;color:var(--slate)}
+.seat-key{width:9px;height:9px;border-radius:50%;display:inline-block;vertical-align:-1px;margin-right:4px;background:var(--pc)}
 /* ---------- Sections / cards ---------- */
 .faces{display:flex;align-items:center;gap:-8px;padding:0}
 .faces .f{width:38px;height:38px;border-radius:50%;border:2.5px solid #fff;background:var(--mist);
@@ -1910,6 +1918,24 @@ function footer(){return `<footer class="site"><div class="wrap">
 </div></footer>`;}
 
 /* ---------------- Reusable cards ---------------- */
+function composition(cid){
+ const seats=PEOPLE.filter(p=>p.council===cid&&p.cat!=="sg").sort((a,b)=>a.rank-b.rank);
+ if(!seats.length)return null;
+ const tally={};seats.forEach(p=>tally[p.party]=(tally[p.party]||0)+1);
+ const ranked=Object.entries(tally).sort((a,b)=>b[1]-a[1]);
+ const [top,n]=ranked[0];
+ const tied=ranked.length>1&&ranked[1][1]===n;
+ const outright=n>seats.length/2;
+ return {seats,top,n,tied,outright,total:seats.length};
+}
+function seatStrip(cid){
+ const c=composition(cid);if(!c)return "";
+ const dots=c.seats.map(p=>`<span class="seat ${p.rank===1?"head":""}" style="--pc:${(PARTYCOLOR[p.party]||["#8CA0AE"])[0]}" title="${esc(p.position)} \u2014 ${esc(PARTY[p.party]||p.party)}"></span>`).join("");
+ const col=(PARTYCOLOR[c.top]||["#8CA0AE"])[0];
+ const label=c.tied?`<i>No majority \u00b7 ${c.total} seats</i>`
+  :`<span class="seat-key" style="--pc:${col}"></span>${esc(c.top==="IND"?"Independents":c.top)} <i>${c.outright?"hold":"lead"} ${c.n} of ${c.total}</i>`;
+ return `<div class="seats"><span class="seatrow">${dots}</span><span class="seat-label">${label}</span></div>`;
+}
 function councilCard(c,q=""){
  const pres=PEOPLE.find(p=>p.council===c.id&&(p.position==="Council President"||p.position==="Mayor"));
  const sg=PEOPLE.find(p=>p.council===c.id&&p.cat==="sg");
@@ -1924,6 +1950,7 @@ function councilCard(c,q=""){
   <div class="card-body">
    <h3>${hi(c.name,q)}${c.note?' <span class="badge b-partial" style="vertical-align:2px">source note</span>':""}</h3>
    <div class="faces">${crew.map(face).join("")}${n>2?`<span class="more">+${n-2} councillors</span>`:""}</div>
+   ${seatStrip(c.id)}
    <div class="kv">
     <span><b>${pres?pres.position:"President"}:</b> ${pres?'<span class="thaana">'+esc(pres.name)+'</span> <span style="color:#8CA0AE">'+esc(latinName(pres.name))+'</span>':'<span class="na">Not listed</span>'}</span>
     <span><b>Secretary General:</b> ${sg?esc(sg.name):'<span class="na">Not listed</span>'}</span>
@@ -2096,6 +2123,7 @@ function viewCouncil(id){const c=councilById(id);if(!c)return `<div class="wrap"
      <dt>Last updated</dt><dd>${c.updated}</dd></dl></div>
    <div class="panel"><h3>Leadership</h3><div class="grid grid-2">${lead.map(p=>personCard(p)).join("")||'<span class="na">Not publicly available</span>'}</div></div>
    <div class="panel"><h3>Councillors (${cllrs.length})</h3>
+    ${seatStrip(c.id)?`<div style="margin:-4px 0 16px">${seatStrip(c.id)}</div>`:""}
     ${cllrs.length?`<div class="grid grid-2">${cllrs.map(p=>personCard(p)).join("")}</div>`:'<div class="empty"><b>No councillors listed</b>This council has no entries in the LGA councillor register.</div>'}</div>
    <div class="panel"><h3>Former office holders</h3><div class="empty" style="border:none;padding:18px"><b>Archive is empty</b>Former councillors and officials are never deleted — they move here with term dates and archive date.</div></div>
   </div>
