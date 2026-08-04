@@ -6,13 +6,14 @@
  "license": "Public information. Source: Local Government Authority (lga.gov.mv).",
  "source": "Local Government Authority (councils, councillors); Civil Service Commission (Secretary Generals)",
  "totals": {
-  "councils": 186,
+  "councils": 184,
   "island_councils": 179,
   "city_councils": 5,
-  "atoll_councils": 2,
+  "atoll_councils": 0,
   "councillors": 677,
   "secretary_generals": 133,
-  "atolls": 20
+  "atolls": 20,
+  "wdc_leaders": 362
  },
  "parties": {
   "MDP": "Maldivian Democratic Party",
@@ -30,7 +31,8 @@
   "councillors": "https://addubeyya.github.io/CouncilRepository/api/v1/councillors.json",
   "atolls": "https://addubeyya.github.io/CouncilRepository/api/v1/atolls.json",
   "atoll": "https://addubeyya.github.io/CouncilRepository/api/v1/atolls/{atoll_code}.json",
-  "secretary_generals": "https://addubeyya.github.io/CouncilRepository/api/v1/secretary-generals.json"
+  "secretary_generals": "https://addubeyya.github.io/CouncilRepository/api/v1/secretary-generals.json",
+  "wdc_leaders": "https://addubeyya.github.io/CouncilRepository/api/v1/wdc.json"
  },
  "notes": [
   "Static JSON over HTTPS with CORS enabled. No key required.",
@@ -38,7 +40,8 @@
   "source_note marks records where LGA's two registers disagree.",
   "lga_id maps to the LGA photo at /storage/councilors/avatars/councilor/{lga_id}.webp",
   "Secretary Generals sourced from the Civil Service Commission; 133 of 186 councils currently have one listed.",
-  "Councillor photos and party colours sourced from the LGA councillors dataset; 526 of 677 have a portrait."
+  "Councillor photos and party colours sourced from the LGA councillors dataset; 526 of 677 have a portrait.",
+  "Atoll councils are out of scope. WDC presidents and vice presidents included; ordinary members are not."
  ],
  "party_colors": {
   "MDP": "#FFD700",
