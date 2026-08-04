@@ -7,6 +7,7 @@
 <meta name="description" content="A central public directory of Island Councils, Atoll Councils, elected Councillors, Mayors and Secretary Generals across the Maldives.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Public+Sans:wght@400;500;600;700&family=Noto+Sans+Thaana:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -35,6 +36,15 @@ button{font-family:var(--body);cursor:pointer}
 .wrap{max-width:1160px;margin:0 auto;padding:0 18px}
 .thaana{font-family:var(--thaana);direction:rtl}
 
+/* ---------- Telegram Mini App ---------- */
+body.tg .govbar,body.tg .masthead,body.tg footer.site .foot-base{display:none}
+body.tg header.site{position:static;border-top:none}
+body.tg nav.mainnav{border-top:none}
+body.tg .hero-inner{padding:22px 0 20px}
+body.tg h1.hero-h{font-size:clamp(24px,7vw,32px)}
+body.tg .hero-sub{font-size:14.5px}
+body.tg section.block{padding:22px 0}
+body.tg footer.site{margin-top:24px}
 /* ---------- Gov bar + header ---------- */
 .govbar{background:var(--navy);color:#BBD3E4;font-size:12.5px;padding:6px 0;letter-spacing:.02em}
 .govbar .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
@@ -2657,6 +2667,30 @@ function render(keepScroll){const hash=location.hash||"#/";
  const inp=document.querySelector('.toolbar input[type=search]');
  if(keepScroll&&inp){inp.focus();const v=inp.value;inp.value="";inp.value=v;}}
 applyEdits();
+
+/* ---------------- Telegram Mini App ---------------- */
+const TG=window.Telegram&&window.Telegram.WebApp;
+if(TG&&TG.initData!==undefined){
+ document.body.classList.add("tg");
+ TG.ready();TG.expand();
+ if(TG.setHeaderColor){try{TG.setHeaderColor("#0A2540")}catch(e){}}
+ if(TG.enableClosingConfirmation)try{TG.enableClosingConfirmation()}catch(e){}
+ // deep link: t.me/<bot>/<app>?startapp=council_addu  ->  #/council/addu
+ const sp=(TG.initDataUnsafe||{}).start_param;
+ if(sp){const [k,...rest]=sp.split("_");const v=rest.join("_");
+  const map={council:"#/council/",atoll:"#/atoll/"};
+  if(map[k]&&v)location.hash=map[k]+v;
+  else if(k==="councillors")location.hash="#/councillors";
+  else if(k==="sg")location.hash="#/sg";
+  else if(k==="wdc")location.hash="#/wdc";}
+ const syncBack=()=>{const home=(location.hash||"#/")==="#/";
+  if(TG.BackButton){home?TG.BackButton.hide():TG.BackButton.show();}};
+ if(TG.BackButton)TG.BackButton.onClick(()=>{history.length>1?history.back():location.hash="#/";});
+ window.addEventListener("hashchange",syncBack);syncBack();
+ // haptic tap on navigation
+ document.addEventListener("click",ev=>{const a=ev.target.closest("a[href^='#/']");
+  if(a&&TG.HapticFeedback)try{TG.HapticFeedback.selectionChanged()}catch(e){}});
+}
 window.addEventListener("hashchange",()=>render());
 render();
 </script>
