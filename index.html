@@ -137,7 +137,7 @@ h1.hero-h{font-family:var(--disp);font-weight:800;font-size:clamp(32px,6vw,54px)
 .seat-label i{font-style:normal;font-weight:600;color:var(--slate)}
 .seat-key{width:9px;height:9px;border-radius:50%;display:inline-block;vertical-align:-1px;margin-right:4px;background:var(--pc)}
 /* ---------- Sections / cards ---------- */
-.faces{display:flex;align-items:center;gap:-8px;padding:0}
+.faces{display:flex;align-items:center;padding:0}
 .faces .f{width:38px;height:38px;border-radius:50%;border:2.5px solid #fff;background:var(--mist);
  overflow:hidden;display:grid;place-items:center;margin-left:-10px;box-shadow:0 1px 3px rgba(10,37,64,.14);flex:none}
 .faces .f:first-child{margin-left:0}
@@ -166,8 +166,8 @@ h2.sec{font-family:var(--disp);font-weight:700;font-size:clamp(21px,3vw,28px);co
 .meta{display:flex;flex-wrap:wrap;gap:6px}
 .tag{font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:999px;background:var(--ocean-soft);color:var(--ocean)}
 .tag.type{background:var(--teal-soft);color:var(--teal-dark)}
-.kv{font-size:13.5px;color:var(--slate);display:grid;gap:4px}
-.kv b{color:var(--ink);font-weight:600}
+.kv{font-size:13.5px;color:var(--slate);display:grid;gap:5px}
+.kv b{color:#8CA0AE;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.03em}
 .card-foot{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:11px;border-top:1px solid var(--line);font-size:12px;color:#8CA0AE}
 
 /* ---------- Badges ---------- */
@@ -2310,9 +2310,9 @@ function councilCard(c,q=""){
  const pres=PEOPLE.find(p=>p.council===c.id&&(p.position==="Council President"||p.position==="Mayor"));
  const sg=PEOPLE.find(p=>p.council===c.id&&p.cat==="sg");
  const n=PEOPLE.filter(p=>p.council===c.id&&p.cat!=="sg"&&p.cat!=="wdc").length;
- const face=p=>{const u=photoFor(p);
-   return `<span class="f">${u?`<img src="${esc(u)}" alt="" loading="lazy" onerror="this.remove()">`
-     :`<span>${esc(initials(latinName(p.name)))}</span>`}</span>`;};
+ const face=p=>{const u=photoFor(p);const ini=esc(initials(latinName(p.name)));
+   return `<span class="f">${u?`<img src="${esc(u)}" alt="" loading="lazy" onerror="faceFallback(this,'${ini}')">`
+     :`<span>${ini}</span>`}</span>`;};
  const crew=PEOPLE.filter(p=>p.council===c.id&&p.rank<=2).slice(0,2).concat(sg?[sg]:[]);
  return `<article class="card">
   <div class="card-top"><span class="atoll-tag">${c.atoll}. ${esc(c.atollName)}</span>
@@ -2332,6 +2332,12 @@ function councilCard(c,q=""){
 // Party colours as published by LGA
 const PARTYCOLOR={MDP:["#FFD700",0],PNC:["#2DD6C1",0],JP:["#EF4444",1],MDA:["#F97316",1],
  AP:["#22C55E",1],DEM:["#89CFF0",0],IND:["#6B7280",1]};
+function photoFallback(img,ini){
+ const alt=img.getAttribute("data-alt");
+ if(alt&&img.src!==alt){img.removeAttribute("data-alt");img.src=alt;return;}
+ img.replaceWith(Object.assign(document.createElement("span"),{className:"ini",textContent:ini}));
+}
+function faceFallback(img,ini){img.replaceWith(Object.assign(document.createElement("span"),{textContent:ini}));}
 function personCard(p,q=""){const c=councilById(p.council);
  const isDv=/[\u0780-\u07BF]/.test(p.name);const isSG=p.cat==="sg";
  const [col,light]=isSG?["#0A2540",1]:(PARTYCOLOR[p.party]||["#8CA0AE",1]);
@@ -2480,7 +2486,7 @@ function viewCouncil(id){const c=councilById(id);if(!c)return `<div class="wrap"
      <button class="btn btn-ghost btn-sm" onclick="revertCouncil('${c.id}')">Revert</button></div>`:""}
    ${c.note?`<div class="panel" style="border-color:#EBD9B4;background:var(--v-amber-bg)"><h3 style="color:#7A5210">\u26a0 Source discrepancy</h3><p style="font-size:13.5px;color:#7A5210;margin:0">${esc(c.note)}</p></div>`:""}
    <div class="panel"><h3>Council overview</h3>
-    <p style="font-size:14px;color:var(--slate);margin-bottom:14px">${esc(c.about)}</p>
+    ${c.about?`<p style="font-size:14px;color:var(--slate);margin-bottom:14px">${esc(c.about)}</p>`:""}
     <dl class="dl">
      ${[["address","Official address"],["phone","Official phone"],["email","Official email"],
         ["website","Website"],["facebook","Facebook"],["hours","Office hours"],
